@@ -182,5 +182,5 @@ def buscar():
         print(f"Error en búsqueda: {e}")
         return jsonify({"error": f"Error: {str(e)}"}), 500
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+#if __name__ == "__main__":
+#    app.run(debug=False, port=433)

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agora Biology NASA Knowledge Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'nasa-blue': '#0B3D91',
+                        'nasa-red': '#FC3D21',
+                        'nasa-light': '#F3F4F6',
+                        'nasa-dark': '#1F2937',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #E5E7EB; }
+        ::-webkit-scrollbar-thumb { background: #9CA3AF; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab.active {
+            border-bottom: 4px solid #FC3D21;
+            color: #0B3D91;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-nasa-light font-sans text-nasa-dark min-h-screen">
+
+    <div id="app" class="flex flex-col md:flex-row min-h-screen">
+        
+        <aside id="sidebar" class="bg-white p-4 w-full md:w-72 shadow-xl md:shadow-2xl flex-shrink-0">
+            <div class="mb-6 pb-4 border-b border-gray-200">
+                <div class="flex items-center space-x-2">
+                    <div class="h-10 w-10 bg-nasa-blue rounded-full flex items-center justify-center text-white font-bold text-xl">N</div>
+                    <h1 class="text-xl font-bold text-nasa-blue">Agora Biology NASA</h1>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Space Biology Knowledge Engine</p>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-sm font-semibold uppercase text-gray-600 mb-2 border-b pb-1">Search Levels</h3>
+                <div class="rounded-lg border border-gray-200 p-3 bg-nasa-light">
+                    <h4 class="font-semibold text-nasa-blue text-sm">Nivel 1: Básico</h4>
+                    <p class="text-xs text-gray-600">Búsqueda en base de datos científica</p>
+                </div>
+                <div class="rounded-lg border border-gray-200 p-3 bg-nasa-light">
+                    <h4 class="font-semibold text-nasa-red text-sm">Nivel 2: Avanzado</h4>
+                    <p class="text-xs text-gray-600">+ Web scraping de artículos</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-grow flex flex-col p-4 md:p-8 overflow-y-auto">
+
+            <div class="mb-6 bg-white p-4 rounded-xl shadow-lg flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-4">
+                
+                <div class="w-full md:w-56 flex-shrink-0">
+                    <label for="search-level" class="sr-only">Search Depth</label>
+                    <select id="search-level" class="w-full p-3 border-2 border-nasa-blue rounded-lg bg-nasa-blue text-white font-semibold shadow-md text-base">
+                        <option value="intermediate" selected>Nivel 1: Básico</option>
+                        <option value="advanced">Nivel 2: Avanzado</option>
+                    </select>
+                </div>
+
+                <div class="flex-grow w-full">
+                    <label for="semantic-search" class="sr-only">Scientific Search</label>
+                    <input type="text" id="semantic-search" placeholder="Buscar en base científica NASA (ej: 'catalase', 'microgravity')"
+                        class="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-nasa-red focus:border-nasa-red text-base shadow-inner">
+                </div>
+                
+                <button onclick="realSearch()" class="w-full md:w-32 bg-nasa-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition duration-150 shadow-md flex items-center justify-center space-x-2">
+                    <i class="fas fa-search"></i>
+                    <span>Buscar</span>
+                </button>
+            </div>
+
+            <div class="flex border-b border-gray-300 mb-6 sticky top-0 bg-nasa-light z-10">
+                <button class="tab p-3 px-6 text-lg hover:bg-gray-200 transition duration-150 active" data-view="dashboard">Dashboard</button>
+                <button class="tab p-3 px-6 text-lg hover:bg-gray-200 transition duration-150" data-view="knowledge-graph">Knowledge Graph</button>
+                <button class="tab p-3 px-6 text-lg hover:bg-gray-200 transition duration-150" data-view="gap-finder">Gap Finder</button>
+                <button class="tab p-3 px-6 text-lg hover:bg-gray-200 transition duration-150" data-view="publications">Resultados</button>
+            </div>
+
+            <div id="dashboard" class="tab-content active grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-bold mb-4 text-nasa-blue">NASA Biology Research Database</h2>
+                    <p class="text-gray-500 mb-4">Sistema de búsqueda científica con 2 niveles de profundidad conectado a MongoDB Atlas</p>
+
+                    <div class="h-64 bg-gray-100 border-2 border-dashed border-nasa-blue rounded-lg flex items-center justify-center text-gray-500 flex-col">
+                        <i class="fas fa-database text-4xl mb-2 text-nasa-blue"></i>
+                        <p>Base de datos: 200 publicaciones científicas</p>
+                        <p class="text-sm">MongoDB Atlas + Web Scraping</p>
+                    </div>
+
+                    <div class="mt-6 flex flex-wrap gap-4">
+                        <div class="p-3 bg-nasa-light rounded-lg text-center shadow-inner">
+                            <p class="text-3xl font-extrabold text-nasa-red" id="total-pubs">200</p>
+                            <p class="text-sm text-gray-600">Publicaciones Indexadas</p>
+                        </div>
+                        <div class="p-3 bg-nasa-light rounded-lg text-center shadow-inner">
+                            <p class="text-3xl font-extrabold text-nasa-blue">2</p>
+                            <p class="text-sm text-gray-600">Niveles de Búsqueda</p>
+                        </div>
+                        <div class="p-3 bg-nasa-light rounded-lg text-center shadow-inner">
+                            <p class="text-3xl font-extrabold text-nasa-red">✓</p>
+                            <p class="text-sm text-gray-600">Web Scraping Activo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-bold mb-4 text-nasa-blue">Cómo usar el sistema</h2>
+                    <ul class="space-y-4">
+                        <li class="border-b pb-4">
+                            <h4 class="text-base font-semibold text-nasa-blue">Nivel 1: Básico</h4>
+                            <p class="text-sm text-gray-700">Búsqueda rápida en la base de datos MongoDB con 200 publicaciones científicas</p>
+                        </li>
+                        <li class="pt-4">
+                            <h4 class="text-base font-semibold text-nasa-red">Nivel 2: Avanzado</h4>
+                            <p class="text-sm text-gray-700">Búsqueda + Web Scraping automático de los artículos científicos originales</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="knowledge-graph" class="tab-content">
+                <div class="bg-white p-6 rounded-xl shadow-lg h-[600px]">
+                    <h2 class="text-xl font-bold mb-4 text-nasa-blue">Scientific Database Overview</h2>
+                    <p class="text-gray-500 mb-4">Sistema conectado a MongoDB Atlas con capacidades de web scraping</p>
+                    <div class="h-[500px] bg-gray-100 border-2 border-dashed border-nasa-blue rounded-lg flex items-center justify-center text-gray-500 flex-col">
+                        <i class="fas fa-brain text-4xl mb-2 text-nasa-blue"></i>
+                        <p>Base de datos científica conectada ✓</p>
+                        <p class="text-sm">200 publicaciones NASA disponibles</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="gap-finder" class="tab-content">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-bold mb-4 text-nasa-blue">Sistema de Búsqueda de 2 Niveles</h2>
+                    <p class="text-gray-500 mb-4">Nivel básico: MongoDB | Nivel avanzado: MongoDB + Web Scraping</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 rounded-lg border-2 border-nasa-blue bg-blue-50">
+                            <h3 class="font-semibold text-lg text-nasa-blue flex items-center space-x-2">
+                                <i class="fas fa-database"></i>
+                                Nivel 1: Búsqueda Básica
+                            </h3>
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                                <li>Consulta directa a MongoDB Atlas</li>
+                                <li>Resultados instantáneos</li>
+                                <li>200 publicaciones científicas</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 rounded-lg border-2 border-nasa-red bg-red-50">
+                            <h3 class="font-semibold text-lg text-nasa-red flex items-center space-x-2">
+                                <i class="fas fa-search-plus"></i>
+                                Nivel 2: Búsqueda Avanzada
+                            </h3>
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                                <li>Web scraping automático</li>
+                                <li>Contenido enriquecido</li>
+                                <li>Información adicional de artículos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="publications" class="tab-content">
+                <h2 class="text-xl font-bold mb-4 text-nasa-blue">Resultados de Búsqueda Científica</h2>
+                <div id="search-results-container" class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-gray-400">
+                         <h3 class="text-lg font-bold text-gray-800">No hay resultados.</h3>
+                         <p class="text-sm text-gray-500 mt-1">Usa la barra de búsqueda superior para buscar en la base científica NASA.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loading-overlay" class="fixed inset-0 bg-nasa-dark bg-opacity-70 flex items-center justify-center z-50 hidden transition-opacity duration-300">
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-32 w-32 border-b-4 border-nasa-red mx-auto"></div>
+                    <p class="text-white text-xl mt-4">Buscando en Base de Datos Científica...</p>
+                    <p class="text-gray-300 text-sm mt-2">Consultando MongoDB Atlas y realizando web scraping</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // --- CORE APPLICATION LOGIC - CONECTADO A TU BACKEND ---
+
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const resultsContainer = document.getElementById('search-results-container');
+        const searchInput = document.getElementById('semantic-search');
+        const searchLevel = document.getElementById('search-level');
+
+        // 1. Tab Switching Functionality
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetView = tab.getAttribute('data-view');
+
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(targetView).classList.add('active');
+            });
+        });
+
+        // 2. Real Search Function - CONECTADA A TU BACKEND FLASK
+        window.realSearch = async () => {
+            const query = searchInput.value.trim();
+            // Mapear los niveles de tu frontend al backend
+            const levelMap = {
+                'intermediate': 'basic',
+                'advanced': 'advanced'
+            };
+            const selectedLevel = levelMap[searchLevel.value] || 'basic';
+
+            if (query === '') {
+                alert("Por favor, introduce un término de búsqueda científico.");
+                return;
+            }
+
+            // Mostrar loading
+            loadingOverlay.classList.remove('hidden');
+            
+            try {
+                // LLAMAR A TU BACKEND FLASK
+                const response = await fetch('/buscar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        nivel: selectedLevel
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // Ocultar loading
+                loadingOverlay.classList.add('hidden');
+                
+                // Mostrar resultados
+                displayResults(data, query, selectedLevel);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                loadingOverlay.classList.add('hidden');
+                resultsContainer.innerHTML = `
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-nasa-red">
+                        <h3 class="text-lg font-bold text-nasa-red">Error en la Búsqueda</h3>
+                        <p class="text-sm text-gray-700 mt-1">${error.message}</p>
+                    </div>`;
+            }
+            
+            document.querySelector('.tab[data-view="publications"]').click();
+        };
+
+        // 3. Función para mostrar resultados del backend
+        function displayResults(data, query, selectedLevel) {
+            const resultados = data.resultados || [];
+            
+            if (resultados.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-gray-400">
+                        <h3 class="text-lg font-bold text-gray-800">No se encontraron resultados</h3>
+                        <p class="text-sm text-gray-500 mt-1">No hay coincidencias para "${query}" en la base científica</p>
+                        <p class="text-xs text-gray-400 mt-2">Prueba con: mouse, human, drosophila, microgravity, radiation</p>
+                    </div>`;
+                return;
+            }
+
+            let html = `<h3 class="text-xl font-bold mb-4 text-nasa-blue">${resultados.length} resultados para "${query}"</h3>`;
+            
+            resultados.forEach((item, index) => {
+                const hasScraping = selectedLevel === 'advanced' && item.scraping_exitoso;
+                
+                html += `
+                <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 ${hasScraping ? 'border-nasa-red' : 'border-nasa-blue'} mb-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="text-lg font-bold text-gray-800 flex-1">${item.title}</h4>
+                        <div class="flex flex-col items-end space-y-2 ml-4">
+                            ${selectedLevel === 'advanced' ? 
+                                `<span class="text-xs font-medium text-white ${item.scraping_exitoso ? 'bg-green-600' : 'bg-red-600'} px-3 py-1 rounded-full">
+                                    ${item.scraping_exitoso ? '✓ Scraping exitoso' : '✗ Scraping falló'}
+                                </span>` : 
+                                `<span class="text-xs font-medium text-white bg-nasa-blue px-3 py-1 rounded-full">
+                                    Nivel Básico
+                                </span>`
+                            }
+                            <span class="text-xs font-medium text-white bg-purple-600 px-3 py-1 rounded-full">
+                                ${item.organism}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 text-sm">
+                        <div class="bg-nasa-light p-3 rounded-lg">
+                            <strong class="text-nasa-blue">Organismo:</strong><br>
+                            ${item.organism}
+                        </div>
+                        <div class="bg-nasa-light p-3 rounded-lg">
+                            <strong class="text-nasa-blue">Tema:</strong><br>
+                            ${item.keyTopic}
+                        </div>
+                        <div class="bg-nasa-light p-3 rounded-lg">
+                            <strong class="text-nasa-blue">Relevancia:</strong><br>
+                            ${item.relevance}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <a href="${item.link}" target="_blank" class="text-nasa-blue hover:text-nasa-red transition-colors text-sm">
+                            <i class="fas fa-external-link-alt mr-1"></i> Ver publicación original
+                        </a>
+                    </div>
+                `;
+                
+                // MOSTRAR DATOS DE SCRAPING (nivel avanzado)
+                if (hasScraping && item.scraping_exitoso) {
+                    html += `
+                    <div class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                            <i class="fas fa-search mr-2"></i> Información Extraída (Web Scraping):
+                        </h5>
+                        <p class="text-sm text-gray-700 mb-2"><strong>Título extraído:</strong> ${item.titulo_extraido}</p>
+                        
+                        ${item.parrafos_extraidos && item.parrafos_extraidos.length > 0 ? `
+                        <div class="mt-3">
+                            <h6 class="font-medium text-green-700 mb-1">Contenido relevante:</h6>
+                            ${item.parrafos_extraidos.map(parrafo => 
+                                `<p class="text-sm text-gray-600 mb-2 pl-4 border-l-2 border-green-400">${parrafo}</p>`
+                            ).join('')}
+                        </div>
+                        ` : '<p class="text-sm text-gray-500">No se extrajo contenido adicional.</p>'}
+                    </div>
+                    `;
+                }
+                
+                html += `</div>`;
+            });
+            
+            resultsContainer.innerHTML = html;
+        }
+
+        // 4. Permitir búsqueda con Enter
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                realSearch();
+            }
+        });
+
+        // Initialize the first tab as active on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.tab[data-view="dashboard"]').click();
+        });
+    </script>
+
+</body>
+</html>
